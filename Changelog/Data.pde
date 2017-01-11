@@ -3,8 +3,6 @@ JSONObject getJson(String filename) {
   return loadJSONObject(filename); //La primera linea es basura
 }
 
-
-
 String[][] getInsertions(String data) {
   String[][] insertions = matchAll(data, "\"ty\":\"is\",\"ibi\":(.*?),\"s\":\"(.*?)\"");
   return insertions;

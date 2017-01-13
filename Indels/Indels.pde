@@ -1,21 +1,18 @@
 /*
-Parsea a un jon el archivo
 */
 PrintWriter output;
 JSONArray changes;
-color bg = 255;
 
 void setup() { 
   size(1200,600);
   background(255);
-  JSONArray changes = new JSONArray();
-  String lines[] = loadStrings("json.txt");
+  String lines[] = loadStrings("../data/54.txt");
   int index = lines[0].indexOf("changelog");
   String changelog = lines[0].substring(index+12);
-  //println(changelog);
+  println(changelog);
   //String[][] insertion = matchAll(changelog, "\"ty\":\"is\",\"ibi\":(.*?),\"s\":\"(.*?)\".?+\\},(\\d{13}?)");
   String[][] indels = matchAll(changelog, "\"ty\":\"is\",\"ibi\":(\\d+),\"s\":\"(.*?)\"|\"ty\":\"ds\",\"si\":([0-9]+),\"ei\":([0-9]+)");
-  for (int i = 0; i < 1000; i++) {
+  for (int i = 0; i < 10; i++) {
     println(indels[i][0]+" "+indels[i][1]+" "+indels[i][2]+" "+indels[i][3]+" "+indels[i][4]);
   }
   int counter = 0;

@@ -15,7 +15,8 @@ void setup() {
   for (int i = 0; i < 10; i++) {
     println(indels[i][0]+" "+indels[i][1]+" "+indels[i][2]+" "+indels[i][3]+" "+indels[i][4]);
   }
-  int counter = 0;
+  int noIs = 0;
+  int noDs = 0;
   for (int i = 0; i < indels.length; i ++) {
     float x = map(i,0,indels.length,0,width);
     if (indels[i][1] != null) { //insertions
@@ -23,6 +24,7 @@ void setup() {
       int fin = start + indels[i][2].length();
       float y1 = map(start,0,5000,0,height);
       float y2 = map(fin,0,5000,0,height);
+      noIs++;
       stroke(0);
       line(x,height-y1,x,height-y2);
     } else { //deletions
@@ -30,10 +32,13 @@ void setup() {
       int fin = start + indels[i][4].length(); 
       float y1 = map(start,0,5000,0,height);
       float y2 = map(fin,0,5000,0,height);
+      noDs++;
       stroke(255,0,0);
       line(x,height-y1,x,height-y2);
     }
   }
+  println("Insertions: " + noIs);
+  println("Deletions: " + noDs);
 }
 
 String insert(String original, String toInsert, int position){

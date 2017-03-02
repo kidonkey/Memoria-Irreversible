@@ -7,6 +7,7 @@ from os import listdir
 
 
 def get_changelog(path):
+    """Takes the path to a Google Docs history json and returns its changelog as a list of tuples."""
     changelog = []
 
     def parse_mlti(mts, timestamp):
@@ -46,6 +47,7 @@ def get_changelog(path):
 
 
 def save_changelog(name, changelog):
+    """Intakes a changelog and saves it in '/changelogs' with the name given."""
     f = open('../changelogs/' + name, mode='w', encoding="utf8")
     for l in changelog:
         if l[1] == 'deletion':
@@ -57,6 +59,8 @@ def save_changelog(name, changelog):
 
 
 def graph(name, changelog):
+    #TODO not working...
+    """Draws a words vs. log, accumulated-positions curve graph and saves it to '/position-entry'."""
     cum = [0]
     ins = [0]
     dls = [0]
@@ -73,10 +77,15 @@ def graph(name, changelog):
         pos.append(changelog[x][2])
     # plt.plot(ins)
     plt.plot(np.array(cum))
+    plt.ylabel('Position')
+    plt.xlabel('Log Entry')
     # plt.plot(np.array(cum)-np.array(ins))
     plt.plot(pos)
+    fig = plt.gcf()
+    fig.canvas.set_window_title(name)
+    plt.show()
     # plt.plot(np.array(cum)-np.array(dls))
-    plt.savefig('../pos_graph/' + name + '.png', bbox_inches='tight')
+    plt.savefig(name + '.pdf', bbox_inches='tight')
     plt.clf()
 
 
@@ -102,11 +111,13 @@ def time_graph(name, changelog):
     # plt.plot(np.array(cum)-np.array(ins))
     plt.plot(ts, pos)
     # plt.plot(np.array(cum)-np.array(dls))
-    plt.savefig('../time_graph/' + name + '.png', bbox_inches='tight')
+    plt.show()
+    plt.savefig('../time_graph/' + name + '.pdf', bbox_inches='tight')
     plt.clf()
 
 
 def recover_text(changelog):
+    """Given a changelog, returns the final state string."""
     text = ''
     for i in range(len(changelog)):
         type = changelog[i][1]
@@ -118,14 +129,22 @@ def recover_text(changelog):
     return text
 
 
-def get_all_changelogs():
+def save_all_changelogs():
+    """Get every changelog in '/data' and save it as a CSV in '/changelogs'."""
     for file in listdir("../data"):
         print(file)
         save_changelog(file[:2] + '.csv', get_changelog(file))
 
-cl = get_changelog('52.txt')
-t = recover_text(cl)
-print(t)
+n = '42'
+cl = get_changelog(n+'.txt')
+graph(n, cl)
+print(recover_text(cl))
+pprint(cl)
+#for file in listdir("../data"):
+#     print(file)
+#    cl = get_changelog(file)
+#    graph(file[:2], cl)
+
 
 """""""""
 log = []

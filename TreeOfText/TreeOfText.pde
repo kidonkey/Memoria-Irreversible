@@ -4,32 +4,43 @@ PrintWriter output;
 JSONArray changes;
 String[] lines;
 String text;
+float completed;
 
 void setup() { 
   size(800,600);
+  pixelDensity(2);
   background(255);
   lines = loadStrings("../changelogs/42.csv");
   text = "";
 }
 
 void draw() {
-  println("*****frame "+frameCount);
+  completed = frameCount*100/lines.length;
+  println("Frame "+frameCount);
+  println(completed + "% completed");
   if (frameCount < lines.length) {
-    int i = frameCount;
+    int i = frameCount-1;
     String[] log = match(lines[i], "(\\d+),([a-z]+),(\\d+),(.*+)");
     text = applyChange(text,log);
-    inscribe(text, ".", i);
-    println(text);
+    pushMatrix();
+    translate(width/2-map(text.length(),0,6000,0,width)/2,0);
+    inscribe(text, ".", i, color(150));
+    inscribe(text, ",", i, color(240));
+    inscribeChar(text, '\n', i, color(60));
+    popMatrix();
+  } else {
+    noLoop();
   }
 }
 
-void inscribe(String text, String symbol, int time) {
+void inscribe(String text, String symbol, int time, int chroma) {
   int index = text.indexOf(symbol);
   int p = 0;
   while(index >= 0) {
     float x = map(p + index,0,6000,0,width);
     float y = height-map(time,0,lines.length,0,height);
-    stroke(50);
+    strokeWeight(.5);
+    stroke(chroma);
     point(x,y);
     
     p += index + 1;
@@ -37,8 +48,24 @@ void inscribe(String text, String symbol, int time) {
   }
 }
 
+void inscribeChar(String text, char symbol, int time, int chroma) {
+  int index = text.indexOf(symbol);
+  int p = 0;
+  while(index >= 0) {
+    float x = map(p + index,0,6000,0,width);
+    float y = height-map(time,0,lines.length,0,height);
+    strokeWeight(.5);
+    stroke(chroma);
+    point(x,y);
+    
+    p += index + 1;
+    index = text.substring(p).indexOf(symbol);
+  }
+}
+
+
 String applyChange(String text, String[] log) {
-  String timestamp = log[1];
+  String timestamp = log[1]; //<>//
   String type = log[2];
   int ibi = Integer.parseInt(log[3]);
   String info = log[4];
@@ -48,8 +75,7 @@ String applyChange(String text, String[] log) {
     text = text.substring(0,ibi - 1) + separateLines(info) + text.substring(ibi - 1,text.length());
   } else {
     int end = Integer.parseInt(info);
-    print(text.length()+" "+ibi+" "+end);
-    text = text.substring(0,ibi - 1) + text.substring(end,text.length());
+    text = text.substring(0,ibi-1) + text.substring(end,text.length());
   }
   return text;
 }

@@ -50,7 +50,7 @@ def save_changelog(name, changelog):
     """Intakes a changelog and saves it in '/changelogs' with the name given."""
     f = open('../changelogs/' + name, mode='w', encoding="utf8")
     for l in changelog:
-        if l[1] == 'deletion':
+        if l[1] == 'delete':
             f.write(str(l[0]) + ',' + str(l[1]) + ',' + str(l[2]) + ',' + str(l[3]) + '\n')
         else:
             f.write(str(l[0]) + ',' + str(l[1]) + ',' + str(l[2]) + ',' + repr(str(l[3])) + '\n')
@@ -135,11 +135,9 @@ def save_all_changelogs():
         print(file)
         save_changelog(file[:2] + '.csv', get_changelog(file))
 
-n = '42'
+n = '46'
 cl = get_changelog(n+'.txt')
-graph(n, cl)
-print(recover_text(cl))
-pprint(cl)
+save_changelog(n+'.csv', cl)
 #for file in listdir("../data"):
 #     print(file)
 #    cl = get_changelog(file)

@@ -10,23 +10,38 @@ void setup() {
   size(800,600);
   pixelDensity(2);
   background(255);
-  lines = loadStrings("../changelogs/42.csv");
+  lines = loadStrings("../changelogs/43.csv");
   text = "";
 }
 
 void draw() {
   completed = frameCount*100/lines.length;
-  println("Frame "+frameCount);
-  println(completed + "% completed");
+  if (frameCount%100==0) {
+    println("Frame "+frameCount);
+    println(completed + "% completed");
+  }
   if (frameCount < lines.length) {
     int i = frameCount-1;
     String[] log = match(lines[i], "(\\d+),([a-z]+),(\\d+),(.*+)");
     text = applyChange(text,log);
     pushMatrix();
     translate(width/2-map(text.length(),0,6000,0,width)/2,0);
-    inscribe(text, ".", i, color(150));
-    inscribe(text, ",", i, color(240));
-    inscribeChar(text, '\n', i, color(60));
+    
+    float l = map(text.length(),0,6000,0,width);
+    float y = height-map(i,0,lines.length,0,height);
+    stroke(0,2);
+    strokeWeight(1);
+    line(0,y,l,y);
+    float x = map(Integer.parseInt(log[3]),0,6000,0,width);
+    if(log[2].equals("insert")) {
+      stroke(50,255,0);
+    } else {
+      stroke(255,0,0);
+    }
+    point(x,y);
+    
+    inscribe(text, ".\n", i, color(60));
+    inscribe(text, ".", i, color(180));
     popMatrix();
   } else {
     noLoop();

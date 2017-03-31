@@ -6,6 +6,12 @@ import numpy as np
 from os import listdir
 
 
+def import_json(n):
+    print(reproduce(get_changelog(n + '.txt'), 0))
+    save_changelog(n + '.csv', get_changelog(n + '.txt'))
+    print('IMPORT SUCCESSFUL!')
+
+
 def get_changelog(path):
     """Takes the path to a Google Docs history json and returns its changelog as a list of tuples."""
     changelog = []
@@ -58,9 +64,8 @@ def save_changelog(name, changelog):
     f.close()
 
 
-def graph(name, changelog):
-    #TODO not working...
-    """Draws a words vs. log, accumulated-positions curve graph and saves it to '/position-entry'."""
+def chars_indels(name, changelog):
+    """Draws a characters vs. indels, accumulated-positions curve graph and saves it to '../chars-indels'."""
     cum = [0]
     ins = [0]
     dls = [0]
@@ -75,17 +80,13 @@ def graph(name, changelog):
             ins.append(ins[x])
             dls.append(changelog[x][3] - changelog[x][2] + 1)
         pos.append(changelog[x][2])
-    # plt.plot(ins)
     plt.plot(np.array(cum))
-    plt.ylabel('Position')
-    plt.xlabel('Log Entry')
-    # plt.plot(np.array(cum)-np.array(ins))
+    plt.ylabel('Characters')
+    plt.xlabel('Indels')
     plt.plot(pos)
     fig = plt.gcf()
     fig.canvas.set_window_title(name)
-    plt.show()
-    # plt.plot(np.array(cum)-np.array(dls))
-    plt.savefig(name + '.pdf', bbox_inches='tight')
+    plt.savefig('../chars-indels/'+name + '.png', bbox_inches='tight')
     plt.clf()
 
 
@@ -106,20 +107,18 @@ def time_graph(name, changelog):
             dls.append(changelog[x][3] - changelog[x][2] + 1)
         pos.append(changelog[x][2])
         ts.append(changelog[x][0])
-    # plt.plot(ins)
     plt.plot(ts, np.array(cum))
-    # plt.plot(np.array(cum)-np.array(ins))
     plt.plot(ts, pos)
-    # plt.plot(np.array(cum)-np.array(dls))
-    plt.show()
     plt.savefig('../time_graph/' + name + '.pdf', bbox_inches='tight')
     plt.clf()
 
 
-def recover_text(changelog):
-    """Given a changelog, returns the final state string."""
+def reproduce(changelog, indels):
+    """Given a changelog, returns string of changes accumulated up to indels or final state if indels is 0."""
     text = ''
-    for i in range(len(changelog)):
+    if indels == 0 or indels > len(changelog):
+        indels = len(changelog)
+    for i in range(indels):
         type = changelog[i][1]
         if type == 'insert':
             ibi = changelog[i][2]
@@ -135,29 +134,19 @@ def save_all_changelogs():
         print(file)
         save_changelog(file[:2] + '.csv', get_changelog(file))
 
-n = '46'
-cl = get_changelog(n+'.txt')
-save_changelog(n+'.csv', cl)
+
+for dir in listdir("../data")[1:]:
+    time_graph(dir[:2],get_changelog(dir))
+
+    #chars_indels('40',get_changelog(file))
+
+
+#for n in range(41, 61):
+#    print(str(n))
+#    cl = get_changelog(str(n)+'.txt')
+#    save_changelog(str(n)+'.csv', cl)
 #for file in listdir("../data"):
 #     print(file)
 #    cl = get_changelog(file)
 #    graph(file[:2], cl)
 
-
-"""""""""
-log = []
-ibis = 1
-change = ''
-si = 1
-ei = 1
-for i in range(len(changelog) - 1):
-    if changelog[i][1] == changelog[i + 1][1] == 'insertion' and changelog[i][2] == changelog[i+1][2]-len(changelog[i][3]):
-        change += changelog[i + 1][3]
-    elif changelog[i][1] != changelog[i + 1][1] and changelog[i][1] == 'insertion':
-        log.append((changelog[i][0], changelog[i][1], changelog[i][2], change+changelog[i][3]))
-        si = changelog[i+1][2]
-        ei = changelog[i+1][3]
-    elif changelog[i][1] == changelog[i + 1][1] == 'deletion' and changelog[i][2]-changelog[i][3]+1 == changelog[i+1][2]:
-        ei = changelog
-pprint(log)
-"""""""""

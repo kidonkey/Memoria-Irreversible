@@ -11,7 +11,6 @@ class Changelog {
     changes = lines.length;
     log = new String[changes][4];
     for (int line = 0; line < lines.length; line++) {
-      print(log[line][0]);
       log[line] = match(lines[line], "(\\d+),([a-z]+),(\\d+),(.*+)");
       if (Integer.parseInt(log[line][3]) > l) {
         l = Integer.parseInt(log[line][3]);
@@ -24,8 +23,9 @@ class Changelog {
       text = applyChange(text, log[t-1]);
       return log[t-1];
     } else {
-       return null;
-     }
+       String[] emptyLog = {"","","","",""};
+       return emptyLog;
+    }
   }
   String applyChange(String text, String[] log) {
     String timestamp = log[1];

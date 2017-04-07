@@ -4,6 +4,10 @@ from itertools import islice
 import matplotlib.pyplot as plt
 import numpy as np
 from os import listdir
+from nltk import word_tokenize
+from nltk.stem import SnowballStemmer
+import re
+from collections import Counter
 
 
 def import_json(n):
@@ -54,7 +58,7 @@ def get_changelog(path):
 
 def save_changelog(name, changelog):
     """Intakes a changelog and saves it in '/changelogs' with the name given."""
-    f = open('../changelogs/' + name, mode='w', encoding="utf8")
+    f = open('../changelogs/' + name + '.csv', mode='w', encoding="utf8")
     for l in changelog:
         if l[1] == 'delete':
             f.write(str(l[0]) + ',' + str(l[1]) + ',' + str(l[2]) + ',' + str(l[3]) + '\n')
@@ -81,16 +85,18 @@ def chars_indels(name, changelog):
             dls.append(changelog[x][3] - changelog[x][2] + 1)
         pos.append(changelog[x][2])
     plt.plot(np.array(cum))
-    plt.ylabel('Characters')
+    plt.ylabel('Characters/Position')
     plt.xlabel('Indels')
     plt.plot(pos)
     fig = plt.gcf()
     fig.canvas.set_window_title(name)
-    plt.savefig('../chars-indels/'+name + '.png', bbox_inches='tight')
+    plt.savefig('../chars-indels/' + name + '.png', bbox_inches='tight')
     plt.clf()
 
 
-def time_graph(name, changelog):
+def time_graph(id):
+    d = get_info(id)
+    changelog = get_changelog(id + '.txt')
     ts = [changelog[0][0]]
     cum = [0]
     ins = [0]
@@ -109,7 +115,10 @@ def time_graph(name, changelog):
         ts.append(changelog[x][0])
     plt.plot(ts, np.array(cum))
     plt.plot(ts, pos)
-    plt.savefig('../time_graph/' + name + '.pdf', bbox_inches='tight')
+    plt.xlabel("Time")
+    plt.ylabel('Characters/Position')
+    plt.title(id + ' ' + d[2])
+    plt.savefig('../time_graph/' + id + '.png', bbox_inches='tight')
     plt.clf()
 
 
@@ -128,25 +137,99 @@ def reproduce(changelog, indels):
     return text
 
 
-def save_all_changelogs():
-    """Get every changelog in '/data' and save it as a CSV in '/changelogs'."""
-    for file in listdir("../data"):
-        print(file)
-        save_changelog(file[:2] + '.csv', get_changelog(file))
+def list_data():
+    return listdir("../data")[1:]
 
 
-for dir in listdir("../data")[1:]:
-    time_graph(dir[:2],get_changelog(dir))
+def get_info(id=''):
+    with open("../data.csv", 'rt', encoding="utf8") as f:
+        lines = f.readlines()
+        data = dict()
+        for line in lines:
+            d = line.split(',')
+            data[d[0]] = d[1:]
+    if id != '':
+        if id in data:
+            return data[id]
+        else:
+            return None
+    return data
 
-    #chars_indels('40',get_changelog(file))
+
+def plot_deviation(name, changelog):
+    """Draws a characters vs. indels, accumulated-positions curve graph and saves it to '../chars-indels'."""
+    cum = [0]
+    ins = [0]
+    dls = [0]
+    pos = [0]
+    for x in range(len(changelog)):
+        if changelog[x][1] == 'insert':
+            cum.append(cum[x] + len(changelog[x][3]))
+            ins.append(ins[x] + len(changelog[x][3]))
+            dls.append(dls[x])
+        if changelog[x][1] == 'delete':
+            cum.append(cum[x] - (changelog[x][3] - changelog[x][2] + 1))
+            ins.append(ins[x])
+            dls.append(changelog[x][3] - changelog[x][2] + 1)
+        pos.append(changelog[x][2] - x)
+    # plt.plot(np.array(cum))
+    plt.ylabel('Cusum')
+    plt.xlabel('Indels')
+    plt.plot(pos)
+    fig = plt.gcf()
+    fig.canvas.set_window_title(name)
+    plt.savefig('../deviation/' + name + '.png', bbox_inches='tight')
+    plt.clf()
 
 
-#for n in range(41, 61):
-#    print(str(n))
-#    cl = get_changelog(str(n)+'.txt')
-#    save_changelog(str(n)+'.csv', cl)
-#for file in listdir("../data"):
-#     print(file)
-#    cl = get_changelog(file)
-#    graph(file[:2], cl)
+def cusum(name, changelog):
+    """Draws a characters vs. indels, accumulated-positions curve graph and saves it to '../chars-indels'."""
+    cum = [0]
+    ins = [0]
+    dls = [0]
+    pos = [0]
+    cusum = [0, 0]
+    for x in range(len(changelog)):
+        if changelog[x][1] == 'insert':
+            cum.append(cum[x] + len(changelog[x][3]))
+            ins.append(ins[x] + len(changelog[x][3]))
+            dls.append(dls[x])
+        if changelog[x][1] == 'delete':
+            cum.append(cum[x] - (changelog[x][3] - changelog[x][2] + 1))
+            ins.append(ins[x])
+            dls.append(changelog[x][3] - changelog[x][2] + 1)
+        pos.append(changelog[x][2] - x)
+        cusum.append(changelog[x][2] - x + cusum[x - 1])
+    # plt.plot(np.array(cum))
+    plt.ylabel('Cusum')
+    plt.xlabel('Indels')
+    plt.plot(cusum)
+    fig = plt.gcf()
+    fig.canvas.set_window_title(name)
+    plt.savefig('../cusum/' + name + '.png', bbox_inches='tight')
+    plt.clf()
 
+
+def get_keywords(changelog):
+    stemmer = SnowballStemmer('spanish')
+    text = reproduce(changelog, 0)
+    regex = re.compile('([^\s\w]|_)+')
+    alfa = regex.sub('', text)
+    stemmed_text = [stemmer.stem(i) for i in word_tokenize(alfa)]
+    c = Counter(stemmed_text)
+    d = dict(c)
+    blacklist = ['tambien', 'sus', 'com', 'cual', 'si', 'son', 'pued', 'dad', 'ya', 'hay', 'esta', 'su', 'o', 'sea',
+                 'ha', 'asi', 'lo', 'mas', 'sin', 'a', 'es', 'una', 'de', 'se', 'los', 'la', 'el', 'y', 'en', 'par',
+                 'del', 'que', 'no', 'un', 'por', 'las', 'con', 'este', 'al']
+    for word in blacklist:
+        if word in d:
+            d.pop(word)
+    import operator
+    highest = dict(sorted(d.items(), key=operator.itemgetter(1), reverse=True)[:5])
+    return highest.keys()
+
+
+
+
+# for id in get_info().keys():
+#    save_changelog(id,get_changelog(id+".txt"))

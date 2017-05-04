@@ -37,12 +37,25 @@ class Changelog {
       startPos = Integer.parseInt(startLog[3]);
       int nextInsertion =  Integer.parseInt(log[t-1][3]);
       int currentPos = startPos + burst.length();
-      while (nextInsertion == currentPos) { //<>//
-        burst += log[t-1][4].substring(1,log[t-1][4].length()-1);
-        text = applyChange(text, log[t-1]);
-        t++;
-        nextInsertion = Integer.parseInt(log[t-1][3]);
-        currentPos = startPos + burst.length();
+      while (nextInsertion == currentPos || nextInsertion == currentPos-1) { //<>//
+        if (log[t-1][2].equals("insert")) {
+          burst += separateLines(log[t-1][4].substring(1,log[t-1][4].length()-1));
+          text = applyChange(text, log[t-1]);
+          t++;
+          nextInsertion = Integer.parseInt(log[t-1][3]);
+          currentPos = startPos + burst.length();
+        } else {
+          int deletion = Integer.parseInt(log[t-1][4])-Integer.parseInt(log[t-1][3])+1;
+          if (burst.length()-deletion >= 0) {
+            burst = burst.substring(0,burst.length()-deletion);
+          } else {
+            break;
+          }
+          text = applyChange(text, log[t-1]);
+          t++;
+          nextInsertion = Integer.parseInt(log[t-1][3]);
+          currentPos = startPos + burst.length();
+        }
       }
       String[] burstLog = {"",startLog[1],startLog[2],startLog[3],burst};
       return burstLog;
@@ -70,12 +83,10 @@ class Changelog {
     return text;
   }
   String separateLines(String s) {
-    // Exchanges newline characters for white spaces
     int i = s.indexOf("\\n");
     int p = 0;
     while (i >= 0) {
-      // System.getProperty("line.separator")
-      s = s.substring(0,p+i)+" "+s.substring(p+i+2,s.length());
+      s = s.substring(0,p+i)+System.getProperty("line.separator")+s.substring(p+i+2,s.length());
       p = i;
       i = s.substring(i).indexOf("\\n");
     }

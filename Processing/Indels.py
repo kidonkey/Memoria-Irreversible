@@ -122,19 +122,25 @@ def time_graph(id):
     plt.clf()
 
 
-def reproduce(changelog, indels):
+def reproduce(changelog, indels=0):
     """Given a changelog, returns string of changes accumulated up to indels or final state if indels is 0."""
     text = ''
     if indels == 0 or indels > len(changelog):
         indels = len(changelog)
     for i in range(indels):
-        type = changelog[i][1]
-        if type == 'insert':
-            ibi = changelog[i][2]
-            text = text[:ibi - 1] + changelog[i][3] + text[ibi - 1:]
-        if type == 'delete':
-            text = text[:changelog[i][2] - 1] + text[changelog[i][3]:]
+        text = apply_change(text, changelog[i])
     return text
+
+
+def apply_change(text, change):
+    type = change[1]
+    ibi = change[2]
+    content = change[3]
+    if type == 'insert':
+        changed = text[:ibi - 1] + content + text[ibi - 1:]
+    if type == 'delete':
+        changed = text[:ibi - 1] + text[content:]
+    return changed
 
 
 def list_data():
@@ -220,7 +226,7 @@ def get_keywords(changelog):
     d = dict(c)
     blacklist = ['tambien', 'sus', 'com', 'cual', 'si', 'son', 'pued', 'dad', 'ya', 'hay', 'esta', 'su', 'o', 'sea',
                  'ha', 'asi', 'lo', 'mas', 'sin', 'a', 'es', 'una', 'de', 'se', 'los', 'la', 'el', 'y', 'en', 'par',
-                 'del', 'que', 'no', 'un', 'por', 'las', 'con', 'este', 'al']
+                 'del', 'que', 'no', 'un', 'por', 'las', 'con', 'este', 'al', 'permit', 'form']
     for word in blacklist:
         if word in d:
             d.pop(word)
@@ -229,6 +235,44 @@ def get_keywords(changelog):
     return highest.keys()
 
 
+def code(changelog, n):
+    """Given a changelog, return a coded string with all its changes nested."""
+    s = ' '
+    t = 0   # level would be calculated dynamically
+    text = ''
+    last_ibi = 0
+    if n == 0 or n > len(changelog):
+        n = len(changelog)
+    for i in range(n):
+        print(changelog[i])
+        type = changelog[i][1]
+        ibi = changelog[i][2]
+        if type == 'insert':
+            pointer = position(s, int(changelog[i][2]))
+            if ibi == last_ibi:
+                s = s[:pointer - 1] + changelog[i][3] + s[pointer - 1:]
+                print("POINTER =", pointer)
+            else:
+                s = s[:pointer - 1] + '|' + changelog[i][3] + '|' + s[pointer - 1:]
+                print("POINTER =", pointer)
+        text = apply_change(text, changelog[i])
+        last_ibi = ibi+len(changelog[i][3])
+        print(s)
+    return s
+
+
+def position(s, ibi):
+    ibi -= 1
+    pointer = 0
+    for c in s:
+        pointer += 1
+        if c != '|':
+            ibi -= 1
+        if ibi == 0:
+            return pointer
+    return None
+
+print('RESULT', code(get_changelog('41.txt'), 3))
 
 
 # for id in get_info().keys():

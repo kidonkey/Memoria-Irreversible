@@ -7,7 +7,7 @@ int rows = 0;
 float sizeFactor = 2;
 String previous = "insert";
 Changelog changelog;
-String n = "56";
+String n = "46";
 String path = "../changelogs/"+n+".csv";
 
 void setup() { 
@@ -24,7 +24,7 @@ void draw() {
     println("Frame "+frameCount);
     println(completed + "% completed");
   }
-  if (completed >= 100 || rows > 10) {
+  if (completed >= 100) {
     saveFrame("pictures/"+n+".png");
     println("SAVED FRAME");
     noLoop();
@@ -33,7 +33,7 @@ void draw() {
   String[] log = changelog.getNext();
   if (log[2].equals("insert")) {
     if (previous.equals("delete")) {
-      x += 2;
+      x = Integer.parseInt(log[3])/10;
       y = border;
     }
     strokeWeight((float) Math.sqrt(log[4].length()/PI)*sizeFactor);
@@ -44,7 +44,7 @@ void draw() {
   }
   if (log[2].equals("delete")) {
     if (previous.equals("insert")) {
-      x += 2;
+      x = Integer.parseInt(log[3])/10;
       y = border;
     }
     int l = Integer.parseInt(log[4])-Integer.parseInt(log[3])+1;

@@ -22,7 +22,11 @@ class Node {
   
   void display() {
     noStroke();
-    fill(0,0,255,100);
+    if (original.contains("#")) {
+      fill(255,0,0,100);
+    } else {
+      fill(0,0,255,100);
+    }
     arc(0, 0, r, r, 0, arc, PIE);
     for (Node child: offspring) {
       pushMatrix();
@@ -59,6 +63,23 @@ class Node {
     }
     if (!higher) {
       insertHere(t, ibi);
+    }
+  }
+  
+  void delete(int ibi, String delete) {
+    end -= delete.length();
+    boolean higher = false;
+    for (Node child: offspring) {
+      if (child.start > ibi) {
+        child.transpose(-delete.length());
+      }
+      else if (child.start <= ibi && child.end > ibi) {
+        child.delete(ibi, delete);
+        higher = true;
+      }
+    }
+    if (!higher) {
+      insertHere(delete, ibi);
     }
   }
   

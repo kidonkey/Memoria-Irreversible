@@ -16,11 +16,11 @@ void setup() {
   smooth();
   pixelDensity(2);
   changelog = new Changelog(path);
-  translate(50,50);
+  translate(width/2,height/2);
   String[] nextBurst = changelog.getNextBurst();
   println(nextBurst[4]);
   tree = new Node(null,nextBurst[4],PI/2,Integer.parseInt(nextBurst[3]));
-  for (int i = 0; i < 4; i++) {
+  for (int i = 0; i < 7; i++) {
     nextBurst = changelog.getNextBurst();
     println(nextBurst[4]);
     tree.insert(nextBurst[4],Integer.parseInt(nextBurst[3]));

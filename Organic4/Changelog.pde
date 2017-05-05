@@ -49,7 +49,10 @@ class Changelog {
           if (burst.length()-deletion >= 0) {
             burst = burst.substring(0,burst.length()-deletion);
           } else {
-            break;
+            for (int i = 0; i< deletion; i++) {
+              burst += "#";
+            }
+            println(burst);
           }
           text = applyChange(text, log[t-1]);
           t++;

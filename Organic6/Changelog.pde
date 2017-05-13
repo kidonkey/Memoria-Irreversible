@@ -99,11 +99,17 @@ class Changelog {
   
   String separateLines(String s) {
     int i = s.indexOf("\\n");
+    int j = s.indexOf("\\t");
     int p = 0;
     while (i >= 0) {
       s = s.substring(0,p+i)+System.getProperty("line.separator")+s.substring(p+i+2,s.length());
       p = i;
       i = s.substring(i).indexOf("\\n");
+    }
+    while (j >= 0) {
+      s = s.substring(0,p+j)+'\t'+s.substring(p+j+2,s.length());
+      p = j;
+      j = s.substring(j).indexOf("\\t");
     }
     return s;
   }

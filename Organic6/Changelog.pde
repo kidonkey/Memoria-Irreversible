@@ -35,26 +35,27 @@ class Changelog {
     int start = Integer.parseInt(startLog[3]);
     String burst = "";
     String[] currentLog = startLog;
-    if (startLog[2] == "delete") {
-      println("deletion cycle");
+    if (startLog[2].equals("delete")) {
       int deletion = Integer.parseInt(currentLog[4]);
       int ibi = start;
       int lastPos = start;
-      while (ibi == lastPos) {
+      while (true) {
         int l = Integer.parseInt(currentLog[4]) - ibi + 1;
         lastPos = ibi - l;
-        deletion = Integer.parseInt(currentLog[4]);
+        deletion = Integer.parseInt(currentLog[4]); //<>//
         if (log[t][2].equals("insert") || Integer.parseInt(log[t][3]) != lastPos) {
           break;
-        }        
+        }
+        currentLog = getNext();
+        ibi = lastPos;
       }
       String[] burstLog = {"",startLog[1],startLog[2],startLog[3],str(deletion)};
       println("deletion from "+startLog[3]+" to "+str(deletion));
       return burstLog;
     } else {
       int nextInsertion =  start;
-      int currentPos = start + burst.length();
-      while (nextInsertion == currentPos || currentLog[2].equals("delete") && nextInsertion == currentPos-1) {    //<>//
+      
+      while (true) {   
         if (currentLog[2].equals("insert")) {
           burst += separateLines(currentLog[4].substring(1,currentLog[4].length()-1));
         } else {
@@ -62,9 +63,13 @@ class Changelog {
           burst = burst.substring(0,burst.length()-deletion);
         }
         int nextIbi = Integer.parseInt(log[t][3]);
-        int nextDel = Integer.parseInt(log[t][4])-nextIbi+1;
-        
-        if (nextIbi != currentPos || (log[t][2].equals("delete") && nextIbi != currentPos-1) || burst.length()-nextDel >= 0) {
+        int currentPos = start + burst.length();
+        if (log[t][2].equals("delete")) {
+          int nextDel = Integer.parseInt(log[t][4])-nextIbi+1;
+          if (nextIbi != currentPos-1 || burst.length()-nextDel < 0) {
+            break;
+          }
+        } else if (nextIbi != currentPos) {
           break;
         }
         currentLog = getNext();

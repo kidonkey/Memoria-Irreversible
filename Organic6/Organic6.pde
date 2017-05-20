@@ -23,7 +23,7 @@ void setup() {
   
   nextBurst = changelog.getNextBurst();
   println(nextBurst[4]);
-  tree = new Node(null,nextBurst[4],Integer.parseInt(nextBurst[3]));
+  tree = new Node(null,nextBurst[4],Integer.parseInt(nextBurst[3]), "insert");
 }
 
 void draw() {
@@ -35,10 +35,11 @@ void draw() {
   if (changelog.t < 1600) {
     nextBurst = changelog.getNextBurst();
     if (nextBurst[2].equals("insert")) {
-      //tree.insert(nextBurst[4],Integer.parseInt(nextBurst[3]));
+      tree.insert(nextBurst[4],Integer.parseInt(nextBurst[3]));
     } else {
-      //tree.delete(Integer.parseInt(nextBurst[3]),Integer.parseInt(nextBurst[4]));
+      tree.delete(Integer.parseInt(nextBurst[3]),Integer.parseInt(nextBurst[4]));
     }
+    //println("\"" + tree.produce() + "\"");
   }
   tree.display();
 }

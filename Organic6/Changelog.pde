@@ -35,6 +35,7 @@ class Changelog {
     int start = Integer.parseInt(startLog[3]);
     String burst = "";
     String[] currentLog = startLog;
+    
     if (startLog[2].equals("delete")) {
       int deletion = Integer.parseInt(currentLog[4]);
       int ibi = start;
@@ -49,12 +50,18 @@ class Changelog {
         currentLog = getNext();
         ibi = lastPos;
       }
-      String[] burstLog = {"",startLog[1],startLog[2],startLog[3],str(deletion)};
+      if (deletion < Integer.parseInt(startLog[3])) {
+        start = deletion;
+        deletion = Integer.parseInt(startLog[3]);
+      } else {
+        start = Integer.parseInt(startLog[3]);
+      }
+      String[] burstLog = {"",startLog[1],startLog[2],str(start),str(deletion)};
       println("deletion from "+startLog[3]+" to "+str(deletion));
       return burstLog;
-    } else {
-      int nextInsertion =  start;
       
+    } else {
+      int nextInsertion;
       while (true) {   
         if (currentLog[2].equals("insert")) {
           burst += separateLines(currentLog[4].substring(1,currentLog[4].length()-1));

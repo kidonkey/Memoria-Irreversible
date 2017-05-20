@@ -1,20 +1,28 @@
-class Node {
+import java.util.*;
+
+class Node implements Comparable<Node>{
   String original;
   String text;
   ArrayList<Node> offspring = new ArrayList<Node>();
+  ArrayList<Node> deleted = new ArrayList<Node>();
   Node parent;
   int place;
   int start;
   int end;
   ArrayList<int[]> mods;
+  String type;
   
-  Node(Node p, String t, int i) {
+  Node(Node p, String t, int i, String k) {
+    //TODO create delete type node
     parent = p;
     text = t;
     original = t;
     place = i;
-    start = i;
+    start = i; // TODO Cambiar a i - 1
     end = start + t.length();
+    type = k;
+    offspring = new ArrayList<Node>();
+    deleted = new ArrayList<Node>();
   }
   
   void display() {
@@ -29,16 +37,20 @@ class Node {
     noFill();
     strokeWeight(.5);
     arc(0, 0, r, r, -a/2, a/2, PIE);
-    stroke(0);
-    strokeWeight(2);
+    if (type.equals("insert")) {
+      stroke(0);
+    } else {
+      stroke(0,0,255);
+    }
+    strokeWeight(1);
     arc(0, 0, r, r, -a/2, a/2);
     float betha,a2,r2,l2;
     int mod = 0;
     for (Node child: offspring) {
+      mod = 0;
       for (Node sibling: offspring) {
-        mod = 0;
         if (sibling.start < child.start) {
-          mod += sibling.end - sibling.end;
+          mod += sibling.end - sibling.start;
         }
       }
       betha = a*(child.place-start-1-mod)/l;
@@ -64,11 +76,19 @@ class Node {
     for (Node child: offspring) {
       child.transpose(l);
     }
+    for (Node child: deleted) {
+      child.transpose(l);
+    }
   }
   
   void insert(String t, int ibi) {
     end += t.length();
-    boolean higher = false;
+    boolean higher = false; //<>//
+    for (Node child: deleted) {
+      if (child.start > ibi) {
+        child.transpose(t.length());
+      }
+    }
     for (Node child: offspring) {
       if (child.start > ibi) {
         child.transpose(t.length());
@@ -83,30 +103,93 @@ class Node {
     }
   }
   
-  void delete(int ibi, int deletion) {
-    println("deletion:"+deletion); //<>//
-    int l = ibi-deletion+1;
+  void delete(int ibi, int deletion) { //<>//
+    // TODO esta wea esta mas redundante q la chucha
+    // hay q diferenciar nodos de antinodos
+    int l = deletion-ibi+1;
     end -= l;
-    boolean higher = false;
-    for (Node child: offspring) {
-      if (child.start > ibi) {
+    int rest = l;
+    boolean[] here = new boolean[l];
+    ArrayList<Node> antichildren = new ArrayList<Node>();
+    for (int i = 0; i < l; i++) {
+      here[i] = true;
+    }
+    // TODO asignar nuevas relaciones
+    for (Node child: deleted) {
+      if (child.start > deletion) {
         child.transpose(-l);
       }
-      else if (child.start <= ibi && child.end > ibi) {
-        child.delete(ibi, deletion);
-        higher = true;
+    }
+    for (Node child: offspring) {
+      if (child.start > deletion) {
+        child.transpose(-l);
+      } else if (ibi >= child.start && ibi <= child.end) {
+        int max = min(deletion,child.end);
+        child.delete(ibi, max);
+        for (int i = 0; i < max-ibi+1; i++) {
+          here[i] = false;
+          rest--;
+        }
+        antichildren.add(child);
+      } else if ( ibi <= child.start && deletion >= child.end) {
+        child.delete(child.start, child.end);
+        for (int i= child.start-ibi; i <= child.end-ibi; i++) {
+          here[i] = false;
+          rest--;
+        }
+        antichildren.add(child);
+      } else if (deletion >= child.start && deletion <= child.end) {
+        int m = max(child.start, ibi);
+        child.delete(m,deletion);
+        for (int i = m-ibi;i < l; i++) {
+          here[i] = false;
+          rest--;
+        }
+        antichildren.add(child);
       }
     }
-    if (!higher) {
-      println(text);
-      //text = text.substring(0,ibi-start)+"#"+text.substring(ibi-start,ibi+l-start)+"#"+text.substring(ibi+l-start,end-start); //<>//
-      text = text.substring(0,ibi-start)+text.substring(ibi+l-start,end-start);
-      println("DEL: " + text);
+    if (rest > 0) {
+      int pos = ibi;
+      for (int i = 0; i < l; i++) {
+        if (here[i]) {
+          pos += i;
+          break;
+        }
+      }
+      String deletedText = text.substring(pos-start,pos-start+l);
+      println("deleted: " + deletedText);
+      int a = pos-start;
+      int b = pos-start+l;
+      println(a, b);
+      String text1 = text.substring(0,a);
+      String text2 = text.substring(b);
+      text= text1+text2; //<>//
+      println("remaining:" + text);
+      Node antinode = new Node(this, deletedText, pos, "delete");
+      antinode.deleted = antichildren;
+      deleted.add(antinode);
     }
   }
   
   void insertHere(String t, int ibi) {
-    Node insertion = new Node(this, t, ibi);
+    Node insertion = new Node(this, t, ibi, "insert");
     offspring.add(insertion);
+  }
+  
+  String produce() { // TODO que pasa mas arriba
+    String s = text;
+    Collections.sort(offspring); //TODO Mover a insert
+    for (Node child: offspring) {
+      if (child.start < start + text.length()) {
+        s = s.substring(0, child.start - 1) + child.produce() + s.substring(child.start - 1);
+      } else {
+        s = s.substring(0, child.start - 1) + child.produce();
+      }
+    }
+    return s;
+  }
+  
+  int compareTo(Node sibling) {
+    return (int) Math.signum(start - sibling.start);
   }
 }

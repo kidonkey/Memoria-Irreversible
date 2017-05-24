@@ -1,37 +1,66 @@
 class Changelog {
   String[][] log;
-  int t;
   String state;
+  int t;
   
   Changelog(String path) {
-    state = "";
     String[] lines = loadStrings(path);
     log = new String[lines.length][4];
     for (int line = 0; line < lines.length; line++) {
       log[line] = match(lines[line], "(\\d+),([a-z]+),(\\d+),(.*+)");
     }
+   
+    state = "";
     t = 0;
   }
   
   String[] getNext() {
+    // Returns log t and commits changes
     String [] nextLog = {"","","","",""};
     if (t < log.length) {
       nextLog = log[t];
-      println(nextLog[2],nextLog[3],nextLog[4]);
-      state = applyChange(state, log[t]);
+      state = commit(state, log[t]);
     }
+    //println(nextLog[2],nextLog[3],nextLog[4]);
     return nextLog;
   }
   
-  String[] seeNext() {
-    String [] nextLog = {"","","","",""};
-    if (t < log.length) {
-      nextLog = log[t];
+  String commit(String state, String[] log) {
+    // Updates state according to changes and t
+    String type = log[2];
+    int ibi = Integer.parseInt(log[3]);
+    String info = log[4];
+    if (type.equals("insert")) {
+      info = info.substring(1,log[4].length()-1);
+      state = state.substring(0,ibi - 1) + separateLines(info) + state.substring(ibi - 1,state.length());
+    } else {
+      int end = Integer.parseInt(info);
+      state = state.substring(0,ibi-1) + state.substring(end,state.length());
     }
-    return nextLog;
+    t++;
+    return state;
+  }
+  
+  String separateLines(String s) {
+    // Utility function that replaces tab and newline characters
+    int i = s.indexOf("\\n");
+    int j = s.indexOf("\\t");
+    int p = 0;
+    while (i >= 0) {
+      s = s.substring(0,p+i)+System.getProperty("line.separator")+s.substring(p+i+2,s.length());
+      p = i;
+      i = s.substring(i).indexOf("\\n");
+    }
+    while (j >= 0) {
+      s = s.substring(0,p+j)+'\t'+s.substring(p+j+2,s.length());
+      p = j;
+      j = s.substring(j).indexOf("\\t");
+    }
+    return s;
   }
   
   String[] getNextBurst() {
+    // Returns the next coherent log block (burst) as one log
     String[] startLog = getNext();
     int start = Integer.parseInt(startLog[3]);
     String burst = "";
@@ -57,12 +86,11 @@ class Changelog {
       } else {
         start = Integer.parseInt(startLog[3]);
       }
-      String[] burstLog = {"",startLog[1],startLog[2],str(start),str(deletion)};
-      println("deletion from "+startLog[3]+" to "+str(deletion));
+      String[] burstLog = {"",startLog[1],startLog[2],str(start - 1),str(deletion)};
+      println("DELETION from "+(start- 1)+" to "+deletion);
       return burstLog;
       
     } else {
-      int nextInsertion;
       while (true) {   
         if (currentLog[2].equals("insert")) {
           burst += separateLines(currentLog[4].substring(1,currentLog[4].length()-1));
@@ -81,44 +109,12 @@ class Changelog {
           break;
         }
         currentLog = getNext();
-        nextInsertion = Integer.parseInt(currentLog[3]);
         currentPos = start + burst.length();
       }
     }
-    println("insertion in "+startLog[3]+ ": " +burst);
-    String[] burstLog = {"",startLog[1],startLog[2],startLog[3],burst};
+    int ibi = start - 1;
+    println("INSERTION in "+ ibi + ": \"" +burst + "\"");
+    String[] burstLog = {"",startLog[1],startLog[2],str(ibi),burst};
     return burstLog;
-  }
-  
-  String applyChange(String state, String[] log) {
-    String type = log[2];
-    int ibi = Integer.parseInt(log[3]);
-    String info = log[4];
-    if (type.equals("insert")) {
-      info = info.substring(1,log[4].length()-1);
-      state = state.substring(0,ibi - 1) + separateLines(info) + state.substring(ibi - 1,state.length());
-    } else {
-      int end = Integer.parseInt(info);
-      state = state.substring(0,ibi-1) + state.substring(end,state.length());
-    }
-    t++;
-    return state;
-  }
-  
-  String separateLines(String s) {
-    int i = s.indexOf("\\n");
-    int j = s.indexOf("\\t");
-    int p = 0;
-    while (i >= 0) {
-      s = s.substring(0,p+i)+System.getProperty("line.separator")+s.substring(p+i+2,s.length());
-      p = i;
-      i = s.substring(i).indexOf("\\n");
-    }
-    while (j >= 0) {
-      s = s.substring(0,p+j)+'\t'+s.substring(p+j+2,s.length());
-      p = j;
-      j = s.substring(j).indexOf("\\t");
-    }
-    return s;
   }
 }

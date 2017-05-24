@@ -37,11 +37,6 @@ class Node implements Comparable<Node>{
     noFill();
     strokeWeight(.5);
     arc(0, 0, r, r, -a/2, a/2, PIE);
-    if (type.equals("insert")) {
-      stroke(0);
-    } else {
-      stroke(0,0,255);
-    }
     strokeWeight(1);
     arc(0, 0, r, r, -a/2, a/2);
     float betha,a2,r2,l2;
@@ -83,7 +78,7 @@ class Node implements Comparable<Node>{
   
   void insert(String t, int ibi) {
     end += t.length();
-    boolean higher = false; //<>//
+    boolean higher = false;
     for (Node child: deleted) {
       if (child.start > ibi) {
         child.transpose(t.length());
@@ -93,7 +88,7 @@ class Node implements Comparable<Node>{
       if (child.start > ibi) {
         child.transpose(t.length());
       }
-      else if (child.start <= ibi && child.end > ibi) {
+      else if (child.start <= ibi && child.end >= ibi) {
         child.insert(t, ibi);
         higher = true;
       }
@@ -103,7 +98,7 @@ class Node implements Comparable<Node>{
     }
   }
   
-  void delete(int ibi, int deletion) { //<>//
+  void delete(int ibi, int deletion) {
     // TODO esta wea esta mas redundante q la chucha
     // hay q diferenciar nodos de antinodos
     int l = deletion-ibi+1;
@@ -156,14 +151,15 @@ class Node implements Comparable<Node>{
           break;
         }
       }
-      String deletedText = text.substring(pos-start,pos-start+l);
-      println("deleted: " + deletedText);
+      println(text.length());
       int a = pos-start;
       int b = pos-start+l;
       println(a, b);
+      String deletedText = text.substring(pos-start,pos-start+l); //<>//
+      println("deleted: " + deletedText);
       String text1 = text.substring(0,a);
       String text2 = text.substring(b);
-      text= text1+text2; //<>//
+      text= text1+text2;
       println("remaining:" + text);
       Node antinode = new Node(this, deletedText, pos, "delete");
       antinode.deleted = antichildren;
@@ -178,12 +174,13 @@ class Node implements Comparable<Node>{
   
   String produce() { // TODO que pasa mas arriba
     String s = text;
-    Collections.sort(offspring); //TODO Mover a insert
+    Collections.sort(offspring); // TODO Mover a insert
     for (Node child: offspring) {
-      if (child.start < start + text.length()) {
-        s = s.substring(0, child.start - 1) + child.produce() + s.substring(child.start - 1);
+      int breakpoint = child.start - start;
+      if (breakpoint < text.length()) {
+        s = s.substring(0, breakpoint) + child.produce() + s.substring(breakpoint);
       } else {
-        s = s.substring(0, child.start - 1) + child.produce();
+        s = s.substring(0, breakpoint) + child.produce(); //<>//
       }
     }
     return s;

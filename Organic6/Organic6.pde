@@ -7,7 +7,7 @@ int rows = 0;
 float sizeFactor = 2;
 String previous = "insert";
 Changelog changelog;
-String n = "41";
+String n = "45";
 String path = "../changelogs/" + n + ".csv";
 Node tree;
 String[] nextBurst;
@@ -28,7 +28,7 @@ void setup() {
 
 void draw() {
   background(199);
-  delay(200);
+  //delay(200);
   translate(width/2,height/2);
   rotate(-PI/2);
   

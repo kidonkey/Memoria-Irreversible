@@ -1,4 +1,4 @@
-Tree tree;
+Document document;
 Changelog changelog;
 String f = "41";
 
@@ -8,7 +8,7 @@ void setup() {
   smooth();
   String path = "../changelogs/" + f + ".csv";
   changelog = new Changelog(path);
-  tree = new Tree();
+  doc = new Document();
 }
 
 void draw() {
@@ -18,9 +18,9 @@ void draw() {
     translate(width/2,height);
     rotate(-PI/2);
     String[] burst = changelog.getNextBurst();
-    tree.change(burst);
-    tree.display();
-    println("TREE: \"" + tree.structure() + "\"");
+    doc.change(burst);
+    doc.display();
+    println("TREE: \"" + doc.structure() + "\"");
   } else {
     noLoop();
     println("DONE:", changelog.t*100/changelog.log.length + "%");

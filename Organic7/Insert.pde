@@ -31,8 +31,7 @@ class Insert extends Node {
   
   void delete(int ibi, int stop) {
     int l = stop - ibi;
-    end -= l;
-    int rest = l; //<>//
+    int rest = l;
     int mod = 0;
     boolean[] here = new boolean[l];
     ArrayList<Delete> antichildren = new ArrayList<Delete>();
@@ -45,32 +44,44 @@ class Insert extends Node {
       }
     }
     for (Insert child: offspring) {
-      if (child.start > stop) {
+      if (child.start >= stop) {
         child.transpose(-l);
       } else if (child.start <= ibi && child.end >= stop) {
         child.delete(ibi, stop);
         rest -= stop - ibi;
-      } else if (child.start >= ibi && child.start <= stop || child.end >= ibi && child.end <= stop) {
+      } else if ((child.start >= ibi && child.start < stop || child.end > ibi && child.end <= stop)) {
         int j = max(child.start, ibi);
         int k = min(child.end, stop);
         child.delete(j, k);
-        for (int i = j; i <k; i++) {
-          here[i - child.start] = false;
+        for (int i = j; i < k; i++) {
+          here[i - ibi] = false; //<>//
+          println(here);
           rest--;
         };
-        mod += child.s.length();
-      } else {
-        mod += child.s.length();
+        if (j == ibi) {
+          mod += child.end - child.start + (k - j);
+        }
+      } else { //problema con los nodos que se reducen a 0 pero tienen hijos
+        mod += child.end - child.start;
       }
     }
     if (rest > 0) {
-      println(start, end);
-      String deletedText = s.substring(ibi - start - mod,stop - start - mod); //<>//
+      int pos = ibi;
+      
+      for (int i = 0; i < l; i++) {
+        if (here[i]) {
+          pos += i;
+          break;
+        }
+      }
+      pos -= start + mod;
+      String deletedText = s.substring(pos, pos + rest); //<>//
       println("DELETED: \""+deletedText+ "\"");
-      s = s.substring(0,ibi - start - mod) + s.substring(stop - start - mod);
+      s = s.substring(0,pos) + s.substring(pos + rest);     
       Delete delete = new Delete(this, deletedText, ibi);
       deleted.add(delete);
     }
+    end -= l;
   }
   
   String play() {
@@ -97,9 +108,9 @@ class Insert extends Node {
   
   void display() {
     // Draw itself then place matrix for each child node
-    float l = s.length();
-    float a = PI/2;
-    float r = l/a;
+    float l = s.length()/2;
+    float a = determineAngle(l);
+    float r = determineRadius(l,a);
     stroke(0,100);
     noFill();
     strokeWeight(.5);
@@ -107,24 +118,34 @@ class Insert extends Node {
     strokeWeight(1);
     arc(0, 0, r, r, -a/2, a/2);
     
-    float betha,a2,r2,l2;
+    float betha;
     int mod = 0;
     for (Insert child: offspring) {
-      betha = a*(-start-mod)/l;
-      l2 = child.s.length();
-      r2 = 30;
-      a2 = l2/r;
-      if (a2 > PI) {
-        a2 = PI;
-        r2 = l2/a2;
-      }
-      betha = betha-a/2;
+      betha = -a/2+a*(child.start - start - mod)/s.length();
+      
       pushMatrix();
       rotate(betha);
       translate(r/2,0);
+      rotate(radians(-30));
       child.display();
       popMatrix();
       mod += child.end - child.start;
     }
+  }
+  
+  float determineAngle(float l) {
+    float a = PI/3;
+    if (l == 0) {
+      a = PI/20;
+    }
+    return a;
+  }
+  
+  float determineRadius(float l, float a) {
+    float r = l/a;
+    if (l == 0) {
+      r = 4;
+    }
+    return r;
   }
 }

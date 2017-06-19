@@ -11,9 +11,10 @@ class Node {
   boolean isInsert;
   boolean visited;
 
-  Node(int i, String[] log) {
+  Node(int i, String[] log, long rootTime) {
     id = i;
-    timestamp = Long.parseLong(log[1]);
+    timestamp = Long.parseLong(log[1]) - rootTime;
+    println(timestamp);
     if (log[2].equals("insert")) isInsert = true;
     else isInsert = false;
     ibi = Integer.parseInt(log[3]);
@@ -109,7 +110,8 @@ class Node {
     int border = 5;
     float k = .2;
     float l = links.length;
-    float r = 20;
+    float r = 20; // log(timestamp-parents.get(0).timestamp+2)
+    //println(r);
     float d = k/r;
     float angle = l*d;
     while (angle >= PI*1.5) {
@@ -123,7 +125,7 @@ class Node {
     for (int i = 0; i < links.length; i++) {
       if (i == 0) line(0, 0, 0, r); // start line
       if (links[i] == null) {
-        stroke(0, 10);
+        stroke(0, 0, 255-(frameCount-id)/2, 10);
         line(0, r-border, 0, r);
       } else {
         try {

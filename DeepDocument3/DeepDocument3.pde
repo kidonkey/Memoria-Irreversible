@@ -2,7 +2,7 @@ import peasy.*;
 PeasyCam cam;
 Document doc;
 Changelog changelog;
-String f = "44"; // outlawed: 43,45,50*,58
+String f = "41"; // outlawed: 43,45,50*,58
 
 void setup() {
   size(600, 600,P3D);

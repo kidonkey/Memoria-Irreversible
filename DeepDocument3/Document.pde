@@ -1,12 +1,15 @@
 class Document {
   ArrayList<Node> nodes;
+  long sot = 1479793965613L;
   Document() {
     nodes = new ArrayList<Node>();
     String []startLog = {"","0","delete","0","0"};
-    nodes.add(new Node(0, startLog));
+    Node root = new Node(0, startLog, sot);
+    root.parents.add(new Node(0, startLog, sot));
+    nodes.add(root);
   }
   void indel(String[] log) {
-    Node node = new Node(nodes.size(), log);
+    Node node = new Node(nodes.size(), log, sot);
     nodes.add(node);
     if (node.isInsert) nodes.get(0).insert(node,-1);
     else nodes.get(0).delete(node,-1);

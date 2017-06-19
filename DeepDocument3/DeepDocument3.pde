@@ -1,9 +1,12 @@
+import peasy.*;
+PeasyCam cam;
 Document doc;
 Changelog changelog;
-String f = "41";
+String f = "44"; // outlawed: 43,45,50*,58
 
 void setup() {
-  size(600, 600);
+  size(600, 600,P3D);
+  cam = new PeasyCam(this, 800);
   background(255);
   pixelDensity(2);
   smooth();
@@ -14,21 +17,17 @@ void setup() {
 
 void draw() {
   background(255);
-  //delay(500);
-  translate(width/2, height);
   rotate(PI);
-  println(doc.toString());
+  //println(doc.toString());
   doc.display();
-  if (frameCount < 200) {
-    translate(width/2, height);
-    rotate(-PI/2);
+  if (frameCount < 2000 && changelog.t < changelog.log.length) {
     String[] burst = changelog.getNextBurst();
     doc.indel(burst);
     //println("TREE: \"" + doc.structure() + "\"");
-  } else {
+  } else if (frameCount == 2000 || changelog.t > changelog.log.length) {
     println("SURFACE:");
-    doc.nodes.get(0).surf();
-    noLoop();
+    doc.toString();
     println("DONE:", changelog.t*100/changelog.log.length + "%");
   }
+  
 }

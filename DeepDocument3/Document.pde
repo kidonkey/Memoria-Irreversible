@@ -8,7 +8,7 @@ class Document {
   void indel(String[] log) {
     Node node = new Node(nodes.size(), log);
     nodes.add(node);
-    if (node.type) nodes.get(0).insert(node,-1);
+    if (node.isInsert) nodes.get(0).insert(node,-1);
     else nodes.get(0).delete(node,-1);
     for (Node n: nodes) n.visited = false;
     //ArrayList<Node> parents = log[0].search();
@@ -17,6 +17,6 @@ class Document {
     return nodes.get(0).toString();
   }
   void display() {
-    nodes.get(0).display(0);
+    nodes.get(0).display(0,0);
   }
 }

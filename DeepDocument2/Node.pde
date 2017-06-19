@@ -8,17 +8,17 @@ class Node {
   int ibi;
   int dei;
   long timestamp;
-  boolean type;
+  boolean isInsert;
   boolean visited;
 
   Node(int i, String[] log) {
     id = i;
     timestamp = Long.parseLong(log[1]);
-    if (log[2].equals("insert")) type = true;
-    else type = false;
+    if (log[2].equals("insert")) isInsert = true;
+    else isInsert = false;
     ibi = Integer.parseInt(log[3]);
     parents = new ArrayList<Node>();
-    if (type) {
+    if (isInsert) {
       s = log[4];
       links = new Link[s.length() + 1];
     } else {
@@ -63,10 +63,20 @@ class Node {
       else if (links[x] == null) {
         c++;
         if (c == n.ibi) {
-          Link l = new Link(n, 0);
-          links[x] = l;
-          n.parents.add(this);
-          break;
+          if (n.s.length() > 0) {
+            Link l = new Link(n, 0);
+            links[x] = l;
+            n.parents.add(this);
+            break;
+          } else {
+            //s += n.s; // TODO malloooo
+            //Link[] links2 = new Link[s.length() + 2];
+            //for (int j = 0; j < links2.length; j++) {
+            //  if (j != x) links2[j] = links[j];
+            //  else j++;
+            //}
+            //links = links2;
+          }
         }
       }
     }
@@ -95,24 +105,36 @@ class Node {
     if (links.length > 0 && i != links.length-1) print(s.substring(i, i+1));
     surf(i+1);
   }
-  void display(float a) {
-    float angle = (float) links.length*PI/500/2;
-    translate(0, 20);
+  void display(float a, float t) {
+    int border = 5;
+    float k = .2;
+    float l = links.length;
+    float r = 20;
+    float d = k/r;
+    float angle = l*d;
+    while (angle >= PI*1.5) {
+      r = r*2;
+      d = k/r;
+      angle = l*d;
+    }
     strokeWeight(1);
-    rotate(-angle-a);
+    translate(0, t);
+    rotate(-angle/2 - a); // symmetric tilt
     for (int i = 0; i < links.length; i++) {
-      
-      rotate(PI/500);
-      if (links[i] != null) {
-        
-        pushMatrix();
-        
-        links[i].display(angle*(float)(i+1)/links.length*2-angle);
-        popMatrix();
+      if (i == 0) line(0, 0, 0, r); // start line
+      if (links[i] == null) {
+        stroke(0, 10);
+        line(0, r-border, 0, r);
       } else {
-        stroke(0,5);
-        line(0,0,0,20);
+        try {
+          pushMatrix();
+          links[i].display(0, r);
+          popMatrix();
+        } catch (Exception e) {
+          println("IGNORED");
+        }
       }
+      rotate(d);
     }
   }
 }

@@ -10,11 +10,13 @@ class Node {
   long timestamp;
   boolean isInsert;
   boolean visited;
+  int session;
 
-  Node(int i, String[] log, long rootTime) {
+  Node(int i, String[] log, int _session) {
     id = i;
-    timestamp = Long.parseLong(log[1]) - rootTime;
-    println(timestamp);
+    timestamp = Long.parseLong(log[1]);
+    session = _session;
+    println("TIMESTAMP:", timestamp);
     if (log[2].equals("insert")) isInsert = true;
     else isInsert = false;
     ibi = Integer.parseInt(log[3]);
@@ -106,35 +108,50 @@ class Node {
     if (links.length > 0 && i != links.length-1) print(s.substring(i, i+1));
     surf(i+1);
   }
-  void display(float a, float t, float k) {
-    int border = 5;
+  void display(float a, float t, float k, float v) {
+    int border = 5*SCALE;
     //float k = .2;
     float l = links.length;
-    float r = 20; // log(timestamp-parents.get(0).timestamp+2)
+    float r = 20*SCALE; // log(timestamp-parents.get(0).timestamp+2)
     //println(r);
     float d = k/r;
     float angle = l*d;
-    while (angle >= PI*1.5) {
+    while (angle >= PI) {
       r = r*2;
       d = k/r;
       angle = l*d;
     }
     strokeWeight(1);
     translate(0, t);
-    rotate(-angle/2 - a); // symmetric tilt
+    if (abs(v) > PI) v = v - TWO_PI; 
+    rotate(-angle/2 - v * SUN); // a-symmetric tilt
+    v += -angle/2 - v * SUN;
     for (int i = 0; i < links.length; i++) {
       if (i == 0) line(0, 0, 0, r); // start line
-      if (links[i] == null) {
-        stroke(0, 0, 255-(frameCount-id)/2, 10);
+      if (links[i] == null) { 
+        stroke(SESSION[session%SESSION.length],30);
         line(0, r-border, 0, r);
       } else {
         try {
           pushMatrix();
-          links[i].display(0, r, k);
+          if (showChars && isInsert && i != links.length-1) {
+            pushMatrix();
+            //translate(0,20);
+            rotateZ(PI/2);
+            //rotateX(PI/2);
+            fill(0);
+            textSize(.5);
+            text(s.charAt(i), 0, 20);
+            popMatrix();
+          }
+          links[i].display(0, r, k, v);
           popMatrix();
-        } catch (Exception e) {}
+        } 
+        catch (Exception e) {
+        }
       }
       rotate(d);
+      v += d;
     }
   }
 }

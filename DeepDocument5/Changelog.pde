@@ -1,4 +1,4 @@
-class Changelog {
+ class Changelog {
   String[][] log;
   String state;
   int t;

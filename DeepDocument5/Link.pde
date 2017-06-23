@@ -14,18 +14,21 @@ class Link {
       return node.toString();
     }
   }
-  void display(float a, float t, float k) {
-    float r = t;
+  void display(float x, float y, float a, float t, float k, float v) {
+    float r = t*SCALE;
     if (node.isInsert) {
-      stroke(0,20);
-      line(0,r-5,0,r);
-      node.display(a,t, k);
+      stroke(0,50);
+      line(x,y,x-5*cos(a),y-5*sin(a));
+      node.display(x,y,a,t, k,v);
     } else {
-      stroke(255,0,0,20);
-      line(0,r-10,0,r-5);
-      if (pos == 0 && node.links[0] != null) node.links[0].display(a,t,k); // first
+      stroke(0,5);
+      line(x-5*cos(a),y-5*sin(a),x-10*cos(a),y-10*sin(a));
+      if (pos == 0 && node.links[0] != null) node.links[0].display(x,y,a,t,k,v); // first
       else if (pos == node.parents.size()-1 && node.links[0] != null) ; //last
       else ;
     }
+  }
+  void click(int x, int y) {
+    node.click(x,y);
   }
 }

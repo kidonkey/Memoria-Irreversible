@@ -3,6 +3,7 @@ PeasyCam cam;
 Document doc;
 Changelog changelog;
 String f = "41"; // outlawed: 43,45,50*,58
+boolean pause = false;
 
 void setup() {
   size(600, 600,P3D);
@@ -20,14 +21,17 @@ void draw() {
   rotate(PI);
   //println(doc.toString());
   doc.display();
-  if (frameCount < 2000 && changelog.t < changelog.log.length) {
+  if (!pause && changelog.t < changelog.log.length) {
     String[] burst = changelog.getNextBurst();
     doc.indel(burst);
     //println("TREE: \"" + doc.structure() + "\"");
-  } else if (frameCount == 2000 || changelog.t > changelog.log.length) {
+  } else if (changelog.t > changelog.log.length) {
     println("SURFACE:");
     doc.toString();
     println("DONE:", changelog.t*100/changelog.log.length + "%");
   }
-  
+  if (keyPressed && key == ENTER) {
+    pause = !pause;
+    println("DONE:", changelog.t*100/changelog.log.length + "%");
+  }
 }

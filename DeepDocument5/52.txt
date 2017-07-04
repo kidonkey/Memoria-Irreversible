@@ -1,0 +1,41 @@
+{0:{1:Descripción {2:[P]{3:{4:p}}roceso industrial {5:
+}}División el Teniente 
+Grupo 8: Tamara Faúndez-Patricia Navarro. {6:{7:{8:{9:
+{11:
+El proceso de {13:obtención de cobre [metalico]{14:{15:metálico[}} ]{16:{17:, puede ser llevado a [cado]{18:{19:cabo}} de dos formas, dependiendo de la composición del mineral extraído[, ]{20:{21:. Para el caso de un mineral sulfurado se utilizan procesos [pirometalurgicos]{22:{23:pirometalúrgicos}},{24: mientras que para el {32:mineral }oxidado un proceso [hidrometalurgico]{25:{26:hidrometalúrgico}}. {27:Este último se [describirá]{28:{29:describe}} a continuación[. ]{30:{31:. {33:
+El proceso [hidrometalurgico]{34:{35:hidrometalúrgico}} se divide en {36:seis etapas: 
+[1.]{37:{38:Extracción mina{46:, {48:[se]{49:{50:en el Teniente [}} [puede realizar a t]{51:{52:]{53:{54:se emplea el [metodo]{55:{56:método}} de extracción por hundimiento{61:, {64:que {66:co{68:nsis{70:[re ]{72:{74:te {76:e{78:n {81:explotar la superfici{83:e {85:del {87:ya{89:ci{91:miento{93:.}}}}}}}}}}}}}}}} }}}}}}
+Chancado y molienda 
+Aglomeración{57:, esta etapa tiene como objetivo {58:{59:preparar [}
+}
+preparar ]{60:}el material mineralizado para la lixiviación, garantizando un buen coeficiente de permeabilidad de la solución[.]{62:{63:. Este coe{65:ficiente{67: es u{69:n [va{71:lor]{95:{96:factor}} {73:[cri{75:tico{77:]{79:{80:crítico[}},]{129:} {82:[que al {84:no s{86:er{88: bien es{90:tudia{92:do puede {94:llevar a fallas o cierre de [l[as planta]{97:[}s]{98:}.]{99:{100:plantas en operación[.[}} {106:{109:]{112:]{114:{115:, ]{116:{128:que }}depende de las {117:{118:[caracteristicas]{119:{120:características}} [fisicas]{121:{122:físicas}} del material{123: en cuanto a proporción de poros[. } }
+]{124:{125:[, [}}}que al no ser bien estudiado puede llevar a fallas o cierre de plantas en operación[,]{126:{127:. ]{130:]{131:{132:[.{155:]{156:{157:, [La proporción de poros ]{158:{159:la que }}depende de la proporción entre lamas (granulometrías inferiores a 5 – 10 micrones) finas  (granulometrías inferiores a 100-150 micrones) y gruesas.[ }}
+
+]{160:[}} ]{161:{162: }}Una proporción inadecuada puede influir en un aumento innecesario del tiempo de lixiviación y con ello el consumo de reactivos.[ 
+        [   [Como el ]{133:{134:]{150:{151:]{152:{153:{163: Para [evitar ]{164:{165:evitar estos inconvenientes es recomendable la eliminación de finos, [l[a que se realiza ]{166:]{167:{168:realizando una aglomeración, que permi[r]{169:{170:t}}e la [a]{171:}unión de {172:varias [particulas]{173:{174:partículas}} finas {175:a otras de mayor tamaño. {179:{183:El aglomerado puede ser realizado con [algun]{184:} adherente }
+}}}}}}}}}
+[}}}}La [proporcion]{135:{136:proporción}} de poros depende {137:de la proporción entre lamas{142: ({143:granulometrías inferiores a 5 – 10 micrones})} [gruesas]{144:{145:finas }} {138:({141:granulometrías[ inferiores a 5 – 10 micrones]{146:{147: inferiores a 100-150 micrones}}}){140: }}y [finas{139: ()} ]{148:{149:gruesas. ]{154:{176:[De donde estas sacando la info?{178:
+pesca el cha[t po{180:]{181:}}
+}
+]{182:}}}}}}}}}}}}}}}}
+}
+ [Sino se asegura la permeabilidad en los lechos de lixiviación, no hay percolación, ]{107:}}}}}}}}}}}}}}}}}}}
+Lixiviación ({39:LX}){40:{101:, es un proceso de extracción [solido]{102:{103:sólido}}-[liquido]{104:{105:líquido[}} ]{110:{111:, donde el miner{113:al aglomerado{177: es distribuido en pilas que se riegan con una solución de agua con ácido }}}}}
+Extracción por solvente ({41:SX}){42:
+Electro-obtención ({43:EW}){44:
+{47:
+}
+[Lixiviación ]{45:}}}}}}}}}}}}}}}}}}
+}
+En este reporte se debe incluir la descripción del proceso productivo que se lleva 
+a cabo en la empresa seleccionada.
+Se pide describir la equipos, transformaciones físico-químicas, y condiciones generales 
+del proceso productivo, enfatizando la importancia del equipo de reacción que se estudiará.
+[
+IMPORTANTE: recordar que el reporte no debe tener más de dos (2) páginas de
+extensión máxima en su cuerpo principal, y la información complementaria debe
+ir en Anexos. Poner especial preocupación en la redacción y la ortografía del reporte.}
+]{10:}}
+{12:*{108:
+
+*}}}}}

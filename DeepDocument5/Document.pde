@@ -4,7 +4,7 @@ class Document {
   long last;
   int session;
   Document() {
-    session = 0;
+    session = SESSION.length-1;
     nodes = new ArrayList<Node>();
     String []startLog = {"","0","delete","0","0"};
     Node root = new Node(0, startLog, session);
@@ -27,9 +27,21 @@ class Document {
     return nodes.get(0).toString();
   }
   void display(float k) {
+    noStroke();
+    fill(0,20);
+    ellipse(-20,0,40,40);
     nodes.get(0).display(0,0,0,0,k,0);
   }
-  void click(int x, int y) {
-    nodes.get(0).click(x,y);
+  Node click(float x, float y) {
+    Node a;
+    for (Node n: nodes) {
+      a = n.click(x,y);
+      if (a != null) return a;
+    }
+    return null;
   }
+  String surf(int n) {
+    return nodes.get(n).surf();
+  }
+  
 }

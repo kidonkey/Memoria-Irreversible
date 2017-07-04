@@ -76,7 +76,7 @@
   }
   
   String[] getNextBurst() {
-    // Returns the next coherent log block (burst) as one log
+    // Returns the next coherent log block (burst) as one log  
     String[] startLog = getNext();
     int start = Integer.parseInt(startLog[3]);
     String burst = "";

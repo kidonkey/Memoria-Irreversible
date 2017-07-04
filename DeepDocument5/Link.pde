@@ -14,6 +14,15 @@ class Link {
       return node.toString();
     }
   }
+  String surf() {
+    if (!node.isInsert) {
+      if (pos == 0) return "{";
+      else if (pos == node.parents.size()-1) return "}" + node.surf();
+      else return "";
+    } else {
+      return node.surf();
+    }
+  }
   void display(float x, float y, float a, float t, float k, float v) {
     float r = t*SCALE;
     if (node.isInsert) {
@@ -21,14 +30,20 @@ class Link {
       line(x,y,x-5*cos(a),y-5*sin(a));
       node.display(x,y,a,t, k,v);
     } else {
-      stroke(0,5);
-      line(x-5*cos(a),y-5*sin(a),x-10*cos(a),y-10*sin(a));
-      if (pos == 0 && node.links[0] != null) node.links[0].display(x,y,a,t,k,v); // first
-      else if (pos == node.parents.size()-1 && node.links[0] != null) ; //last
+      stroke(SESSION[node.session%SESSION.length],10);
+      line(x-10*cos(a),y-10*sin(a),x-5*cos(a),y-5*sin(a));
+      if (pos == 0 && node.links[0] != null) {
+      stroke(0,50);
+        line(x-10*cos(a),y-10*sin(a),x,y);
+      }// first
+      else if (pos == node.parents.size()-1 && node.links[0] != null) {
+        node.links[0].display(x,y,a,t,k,v);
+        //last
+      }
       else ;
     }
   }
-  void click(int x, int y) {
-    node.click(x,y);
-  }
+  //Node click(float x, float y) {
+  //  return node.click(x,y);
+  //}
 }

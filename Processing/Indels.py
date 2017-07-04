@@ -34,8 +34,10 @@ def get_changelog(path):
                 continue
 
     with open("../data/" + path, 'rt', encoding="utf8") as f:
-        for l in islice(f, 1):
-            # print(l)
+        for l in islice(f, 3):
+            print(l)
+            if ')]}' in l:
+                continue
             data = json.loads(l)
             # print(json.dumps(data,indent=2, separators=(',', ': ')))
             for i in range(len(data['changelog'])):  # timestamp
@@ -272,7 +274,7 @@ def position(s, ibi):
             return pointer
     return None
 
-print('RESULT', code(get_changelog('41.txt'), 3))
+save_changelog('60',get_changelog('60.txt'))
 
 
 # for id in get_info().keys():

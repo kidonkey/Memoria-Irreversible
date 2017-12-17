@@ -20,16 +20,16 @@ def get_changelog(path):
     """Takes the path to a Google Docs history json and returns its changelog as a list of tuples."""
     changelog = []
 
-    def parse_mlti(mts, timestamp):
+    def parse_mlti(mts, timestamp, user):
         for i in range(len(mts)):
             if mts[i]['ty'] == 'is':
-                changelog.append((timestamp, 'insert', mts[i]['ibi'], mts[i]['s']))
+                changelog.append((timestamp, user, 'insert', mts[i]['ibi'], mts[i]['s']))
                 # print(mts[i]['ibi'], mts[i]['s'])
             elif mts[i]['ty'] == 'ds':
-                changelog.append((timestamp, 'delete', mts[i]['si'], mts[i]['ei']))
+                changelog.append((timestamp, user, 'delete', mts[i]['si'], mts[i]['ei']))
                 # print(mts[i]['si'], mts[i]['ei'])
             elif mts[i]['ty'] == 'mlti':
-                parse_mlti(mts[i]['mts'], timestamp)
+                parse_mlti(mts[i]['mts'], timestamp, user)
             else:
                 continue
 
@@ -42,30 +42,37 @@ def get_changelog(path):
             # print(json.dumps(data,indent=2, separators=(',', ': ')))
             for i in range(len(data['changelog'])):  # timestamp
                 timestamp = data['changelog'][i][1]
+                user = data['changelog'][i][4]
                 # print('timestamp:', timestamp)
                 if data['changelog'][i][0]['ty'] == 'is':
                     pos = data['changelog'][i][0]['ibi']
                     s = data['changelog'][i][0]['s']
                     # print(pos, s)
-                    changelog.append((timestamp, 'insert', pos, s))
+                    changelog.append((timestamp, user, 'insert', pos, s))
                 if data['changelog'][i][0]['ty'] == 'ds':
                     start = data['changelog'][i][0]['si']
                     end = data['changelog'][i][0]['ei']
                     # print(start, end)
-                    changelog.append((timestamp, 'delete', start, end))
+                    changelog.append((timestamp, user, 'delete', start, end))
                 if data['changelog'][i][0]['ty'] == 'mlti':
-                    parse_mlti(data['changelog'][i][0]['mts'], timestamp)
+                    parse_mlti(data['changelog'][i][0]['mts'], timestamp, user)
     return changelog
+
+
+def group(changelog):
+    for i in range(len(changelog)):
+
+
 
 
 def save_changelog(name, changelog):
     """Intakes a changelog and saves it in '/changelogs' with the name given."""
     f = open('../changelogs/' + name + '.csv', mode='w', encoding="utf8")
     for l in changelog:
-        if l[1] == 'delete':
-            f.write(str(l[0]) + ',' + str(l[1]) + ',' + str(l[2]) + ',' + str(l[3]) + '\n')
+        if l[2] == 'delete':
+            f.write(str(l[0]) + ',' + str(l[1]) + ',' + str(l[2]) + ',' + str(l[3]) + ',' + str(l[4]) + '\n')
         else:
-            f.write(str(l[0]) + ',' + str(l[1]) + ',' + str(l[2]) + ',' + repr(str(l[3])) + '\n')
+            f.write(str(l[0]) + ',' + str(l[1]) + ',' + str(l[2]) + ',' + str(l[3]) + ',' + repr(str(l[4])) + '\n')
     f.flush()
     f.close()
 
@@ -274,8 +281,9 @@ def position(s, ibi):
             return pointer
     return None
 
-save_changelog('60',get_changelog('60.txt'))
+save_changelog('54',get_changelog('54.txt'))
 
 
 # for id in get_info().keys():
 #    save_changelog(id,get_changelog(id+".txt"))
+save_changelog('52',get_changelog('52'+".txt"))

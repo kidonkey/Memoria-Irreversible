@@ -21,7 +21,7 @@ void setup() {
   smooth(8);
   background(255);
   pixelDensity(2);
-  String path = "../changelogs/" + f + ".csv";
+  String path = "../data_preprocessed/" + f + ".csv";
   changelog = new Changelog(path);
   doc = new Document();
   

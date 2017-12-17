@@ -33,7 +33,7 @@ def get_changelog(path):
             else:
                 continue
 
-    with open("../data/" + path, 'rt', encoding="utf8") as f:
+    with open("../data_raw/" + path, 'rt', encoding="utf8") as f:
         for l in islice(f, 3):
             print(l)
             if ')]}' in l:
@@ -66,8 +66,8 @@ def group(changelog):
 
 
 def save_changelog(name, changelog):
-    """Intakes a changelog and saves it in '/changelogs' with the name given."""
-    f = open('../changelogs/' + name + '.csv', mode='w', encoding="utf8")
+    """Intakes a changelog and saves it in '/data_preprocessed' with the name given."""
+    f = open('../data_preprocessed/' + name + '.csv', mode='w', encoding="utf8")
     for l in changelog:
         if l[2] == 'delete':
             f.write(str(l[0]) + ',' + str(l[1]) + ',' + str(l[2]) + ',' + str(l[3]) + ',' + str(l[4]) + '\n')
@@ -153,7 +153,7 @@ def apply_change(text, change):
 
 
 def list_data():
-    return listdir("../data")[1:]
+    return listdir("../data_raw")[1:]
 
 
 def get_info(id=''):
